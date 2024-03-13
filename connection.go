@@ -520,6 +520,9 @@ func (s *connection) run() error {
 
 runLoop:
 	for {
+		if s.framer.QueuedTooManyControlFrames() {
+			s.closeLocal(&qerr.TransportError{ErrorCode: InternalError})
+		}
 		// Close immediately if requested
 		select {
 		case closeErr = <-s.closeChan:
